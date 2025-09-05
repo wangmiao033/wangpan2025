@@ -1,5 +1,4 @@
-// Vercel Serverless Function - 文件下载 API
-export default async function handler(req, res) {
+export default function handler(req, res) {
   // 设置 CORS 头
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -22,7 +21,8 @@ export default async function handler(req, res) {
       success: true,
       message: '文件下载成功（演示模式）',
       downloadCode: code,
-      note: '这是一个演示版本，实际文件传输功能需要完整实现'
+      note: '这是一个演示版本，实际文件传输功能需要完整实现',
+      timestamp: new Date().toISOString()
     });
 
   } catch (error) {

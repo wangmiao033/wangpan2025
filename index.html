@@ -3,89 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文件传输网站</title>
+    <title>文件传输网站 - 测试版</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 50px auto;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
-            background: #f5f5f5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
         .container {
             background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             text-align: center;
         }
         h1 {
             color: #333;
             margin-bottom: 20px;
+            font-size: 2.5em;
         }
-        .status {
-            background: #e8f5e8;
-            border: 1px solid #4caf50;
-            padding: 15px;
-            border-radius: 5px;
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .test-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
             margin: 20px 0;
         }
         button {
             background: #007bff;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 12px 24px;
+            border-radius: 8px;
             cursor: pointer;
             margin: 10px;
+            font-size: 16px;
         }
         button:hover {
             background: #0056b3;
         }
         .result {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
+            background: #e9ecef;
             padding: 15px;
-            border-radius: 5px;
+            border-radius: 8px;
             margin: 20px 0;
             text-align: left;
+            font-family: monospace;
+        }
+        .feature-list {
+            text-align: left;
+            margin: 20px 0;
+        }
+        .feature-list li {
+            margin: 10px 0;
+            padding: 5px 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🚀 文件传输网站</h1>
-        <div class="status">
-            <h2>✅ 网站运行正常！</h2>
-            <p>您的网站已成功部署到 Vercel。</p>
+        
+        <div class="success">
+            <h2>✅ 网站部署成功！</h2>
+            <p>您的文件传输网站已经在 Vercel 上成功运行。</p>
+            <p><strong>访问地址：</strong> <code>https://wangpan2025.vercel.app</code></p>
         </div>
         
-        <h3>测试功能</h3>
-        <button onclick="testAPI()">测试 API</button>
-        <button onclick="testUpload()">测试上传</button>
-        
-        <div id="result" class="result" style="display: none;">
-            <h4>测试结果：</h4>
-            <pre id="resultText"></pre>
+        <div class="test-section">
+            <h3>🧪 功能测试</h3>
+            <button onclick="testAPI()">测试 API 连接</button>
+            <button onclick="testUpload()">测试上传功能</button>
+            <button onclick="testDownload()">测试下载功能</button>
+            
+            <div id="result" class="result" style="display: none;">
+                <h4>测试结果：</h4>
+                <pre id="resultText"></pre>
+            </div>
         </div>
         
-        <h3>功能说明</h3>
-        <ul style="text-align: left;">
-            <li>✅ 网站部署成功</li>
-            <li>✅ 静态页面正常</li>
-            <li>✅ API 接口可用</li>
-            <li>✅ 响应式设计</li>
-        </ul>
+        <div class="feature-list">
+            <h3>📋 当前功能</h3>
+            <ul>
+                <li>✅ 网站成功部署到 Vercel</li>
+                <li>✅ 静态页面正常显示</li>
+                <li>✅ API 接口可以调用</li>
+                <li>✅ 响应式设计支持</li>
+                <li>✅ 文件上传功能（演示版）</li>
+                <li>✅ 文件下载功能（演示版）</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔧 技术信息</h3>
+            <p><strong>部署平台：</strong> Vercel</p>
+            <p><strong>项目状态：</strong> 运行中</p>
+            <p><strong>最后更新：</strong> <span id="timestamp"></span></p>
+        </div>
     </div>
 
     <script>
+        // 显示当前时间
+        document.getElementById('timestamp').textContent = new Date().toLocaleString('zh-CN');
+        
         async function testAPI() {
             try {
                 const response = await fetch('/api/test');
                 const data = await response.json();
-                showResult('API 测试成功：', data);
+                showResult('✅ API 测试成功：', data);
             } catch (error) {
-                showResult('API 测试失败：', error.message);
+                showResult('❌ API 测试失败：', error.message);
             }
         }
         
@@ -97,9 +134,19 @@
                     body: JSON.stringify({ test: true })
                 });
                 const data = await response.json();
-                showResult('上传测试成功：', data);
+                showResult('✅ 上传测试成功：', data);
             } catch (error) {
-                showResult('上传测试失败：', error.message);
+                showResult('❌ 上传测试失败：', error.message);
+            }
+        }
+        
+        async function testDownload() {
+            try {
+                const response = await fetch('/api/download/test123');
+                const data = await response.json();
+                showResult('✅ 下载测试成功：', data);
+            } catch (error) {
+                showResult('❌ 下载测试失败：', error.message);
             }
         }
         

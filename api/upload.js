@@ -1,5 +1,4 @@
-// Vercel Serverless Function - 文件上传 API
-export default async function handler(req, res) {
+export default function handler(req, res) {
   // 设置 CORS 头
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -20,9 +19,10 @@ export default async function handler(req, res) {
     
     res.status(200).json({
       success: true,
+      message: '文件上传成功（演示模式）',
       downloadCode: downloadCode,
       downloadUrl: `${req.headers.origin || 'https://wangpan2025.vercel.app'}/api/download/${downloadCode}`,
-      message: '文件上传成功（演示模式）'
+      timestamp: new Date().toISOString()
     });
 
   } catch (error) {
