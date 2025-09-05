@@ -19,9 +19,7 @@
   ],
   "author": "File Transfer Team",
   "license": "MIT",
-  "dependencies": {
-    "formidable": "^3.5.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "nodemon": "^3.0.1"
   },
