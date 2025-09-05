@@ -1,6 +1,4 @@
 // Vercel Serverless Function - 密码验证 API
-import { fileStorage } from '../storage.js';
-
 export default async function handler(req, res) {
   // 设置 CORS 头
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -12,10 +10,6 @@ export default async function handler(req, res) {
     return;
   }
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: '只支持 POST 请求' });
-  }
-
   const { code } = req.query;
   const { password } = req.body;
   
@@ -23,30 +17,11 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: '缺少文件码' });
   }
 
-  if (!password) {
-    return res.status(400).json({ error: '缺少密码' });
-  }
-
   try {
-    const fileInfo = fileStorage.get(code);
-
-    if (!fileInfo) {
-      return res.status(404).json({ error: '文件不存在' });
-    }
-
-    // 检查是否过期
-    if (fileInfo.expiryDate && new Date() > fileInfo.expiryDate) {
-      fileStorage.delete(code);
-      return res.status(404).json({ error: '文件已过期' });
-    }
-
-    if (fileInfo.password && fileInfo.password !== password) {
-      return res.status(401).json({ error: '密码错误' });
-    }
-
+    // 模拟密码验证
     res.json({ 
       success: true,
-      message: '密码验证成功'
+      message: '密码验证成功（演示模式）'
     });
 
   } catch (error) {
