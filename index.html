@@ -3,53 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文件传输网站 - Vercel 测试版</title>
+    <title>文件传输网站</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
+            max-width: 600px;
+            margin: 50px auto;
             padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: white;
+            background: #f5f5f5;
         }
         .container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 40px;
-            color: #333;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             text-align: center;
         }
         h1 {
-            color: #667eea;
+            color: #333;
             margin-bottom: 20px;
         }
         .status {
-            background: #f0fff4;
-            border: 2px solid #48bb78;
-            border-radius: 10px;
-            padding: 20px;
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            padding: 15px;
+            border-radius: 5px;
             margin: 20px 0;
         }
-        .test-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        button {
+            background: #007bff;
             color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
             margin: 10px;
         }
-        .test-button:hover {
-            transform: translateY(-2px);
+        button:hover {
+            background: #0056b3;
         }
         .result {
-            margin-top: 20px;
-            padding: 15px;
             background: #f8f9fa;
-            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
             text-align: left;
         }
     </style>
@@ -58,41 +56,32 @@
     <div class="container">
         <h1>🚀 文件传输网站</h1>
         <div class="status">
-            <h2>✅ 网站部署成功！</h2>
-            <p>您的文件传输网站已经在 Vercel 上成功运行。</p>
+            <h2>✅ 网站运行正常！</h2>
+            <p>您的网站已成功部署到 Vercel。</p>
         </div>
         
-        <h3>🧪 功能测试</h3>
-        <button class="test-button" onclick="testAPI()">测试 API 连接</button>
-        <button class="test-button" onclick="testUpload()">测试上传功能</button>
+        <h3>测试功能</h3>
+        <button onclick="testAPI()">测试 API</button>
+        <button onclick="testUpload()">测试上传</button>
         
         <div id="result" class="result" style="display: none;">
             <h4>测试结果：</h4>
             <pre id="resultText"></pre>
         </div>
         
-        <h3>📋 功能说明</h3>
+        <h3>功能说明</h3>
         <ul style="text-align: left;">
-            <li>✅ 网站已成功部署到 Vercel</li>
-            <li>✅ 静态页面正常显示</li>
-            <li>✅ API 接口可以调用</li>
-            <li>✅ 响应式设计支持</li>
+            <li>✅ 网站部署成功</li>
+            <li>✅ 静态页面正常</li>
+            <li>✅ API 接口可用</li>
+            <li>✅ 响应式设计</li>
         </ul>
-        
-        <h3>🔧 下一步</h3>
-        <p>现在您可以：</p>
-        <ol style="text-align: left;">
-            <li>完善文件上传功能</li>
-            <li>添加文件存储服务</li>
-            <li>优化用户界面</li>
-            <li>添加更多功能</li>
-        </ol>
     </div>
 
     <script>
         async function testAPI() {
             try {
-                const response = await fetch('/api/hello');
+                const response = await fetch('/api/test');
                 const data = await response.json();
                 showResult('API 测试成功：', data);
             } catch (error) {
@@ -104,9 +93,7 @@
             try {
                 const response = await fetch('/api/upload', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ test: true })
                 });
                 const data = await response.json();
