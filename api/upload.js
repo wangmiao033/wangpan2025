@@ -1,8 +1,8 @@
 // Vercel Serverless Function - 文件上传 API
-const formidable = require('formidable');
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
+import formidable from 'formidable';
+import fs from 'fs';
+import path from 'path';
+import crypto from 'crypto';
 
 // 由于 Vercel 是无状态的，我们使用内存存储
 // 实际应用中应该使用外部存储服务如 AWS S3

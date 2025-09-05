@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "免费大文件传输网站 - 无文件大小限制",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "build": "echo 'No build step required for Vercel'",
     "dev": "vercel dev",
