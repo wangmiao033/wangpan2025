@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>免费大文件传输 - 无文件大小限制</title>
+    <meta name="description" content="免费的大文件传输服务，支持无限制文件大小，快速安全传输">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="pretendardvariable-dynamic-subset.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部导航 -->
+        <header class="header">
+            <div class="nav-container">
+                <div class="logo">
+                    <h1>📁 大文件传输</h1>
+                </div>
+                <nav class="nav-menu">
+                    <a href="#upload" class="nav-link">上传文件</a>
+                    <a href="#download" class="nav-link">下载文件</a>
+                    <a href="#help" class="nav-link">使用帮助</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+            <!-- 上传区域 -->
+            <section id="upload" class="upload-section">
+                <div class="upload-container">
+                    <div class="upload-header">
+                        <h2>🚀 快速上传文件</h2>
+                        <p>支持任意大小文件，无限制传输</p>
+                    </div>
+                    
+                    <div class="upload-zone" id="uploadZone">
+                        <div class="upload-icon">📤</div>
+                        <div class="upload-text">
+                            <h3>拖拽文件到此处或点击选择</h3>
+                            <p>支持所有文件类型，无大小限制</p>
+                        </div>
+                        <input type="file" id="fileInput" multiple style="display: none;">
+                        <button class="upload-btn" id="uploadBtn">选择文件</button>
+                    </div>
+
+                    <!-- 文件列表 -->
+                    <div class="file-list" id="fileList" style="display: none;">
+                        <h3>已选择的文件：</h3>
+                        <div class="files" id="files"></div>
+                    </div>
+
+                    <!-- 上传选项 -->
+                    <div class="upload-options" id="uploadOptions" style="display: none;">
+                        <div class="option-group">
+                            <label for="password">设置密码（可选）：</label>
+                            <input type="password" id="password" placeholder="为文件设置访问密码">
+                        </div>
+                        <div class="option-group">
+                            <label for="expiry">文件有效期：</label>
+                            <select id="expiry">
+                                <option value="1">1天</option>
+                                <option value="7" selected>7天</option>
+                                <option value="30">30天</option>
+                                <option value="0">永久</option>
+                            </select>
+                        </div>
+                        <button class="start-upload-btn" id="startUploadBtn">开始上传</button>
+                    </div>
+
+                    <!-- 上传进度 -->
+                    <div class="upload-progress" id="uploadProgress" style="display: none;">
+                        <div class="progress-header">
+                            <h3>正在上传...</h3>
+                            <button class="cancel-btn" id="cancelBtn">取消</button>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="progress-text" id="progressText">0%</div>
+                    </div>
+
+                    <!-- 上传完成 -->
+                    <div class="upload-complete" id="uploadComplete" style="display: none;">
+                        <div class="complete-icon">✅</div>
+                        <h3>上传完成！</h3>
+                        <div class="download-info">
+                            <p><strong>下载链接：</strong></p>
+                            <div class="link-container">
+                                <input type="text" id="downloadLink" readonly>
+                                <button class="copy-btn" id="copyBtn">复制链接</button>
+                            </div>
+                            <p class="link-note">链接已复制到剪贴板</p>
+                        </div>
+                        <div class="share-options">
+                            <button class="share-btn" id="shareBtn">分享给朋友</button>
+                            <button class="new-upload-btn" id="newUploadBtn">上传新文件</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 下载区域 -->
+            <section id="download" class="download-section">
+                <div class="download-container">
+                    <h2>📥 下载文件</h2>
+                    <div class="download-form">
+                        <input type="text" id="downloadCode" placeholder="输入下载码或粘贴下载链接">
+                        <button class="download-btn" id="downloadBtn">获取文件</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 使用帮助 -->
+            <section id="help" class="help-section">
+                <div class="help-container">
+                    <h2>❓ 使用帮助</h2>
+                    <div class="help-content">
+                        <div class="help-item">
+                            <h3>📤 如何上传文件？</h3>
+                            <ol>
+                                <li>点击"选择文件"按钮或直接拖拽文件到上传区域</li>
+                                <li>可选择设置密码和有效期</li>
+                                <li>点击"开始上传"等待完成</li>
+                                <li>复制生成的下载链接分享给他人</li>
+                            </ol>
+                        </div>
+                        <div class="help-item">
+                            <h3>📥 如何下载文件？</h3>
+                            <ol>
+                                <li>在上方输入下载码或粘贴下载链接</li>
+                                <li>点击"获取文件"按钮</li>
+                                <li>如有密码，输入密码后下载</li>
+                            </ol>
+                        </div>
+                        <div class="help-item">
+                            <h3>🔒 安全说明</h3>
+                            <ul>
+                                <li>所有文件传输都经过加密处理</li>
+                                <li>可设置访问密码保护文件</li>
+                                <li>文件会在设定时间后自动删除</li>
+                                <li>不会保存您的个人信息</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>&copy; 2025 大文件传输服务. 免费、快速、安全.</p>
+        </footer>
+    </div>
+
+    <!-- 模态框 -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
