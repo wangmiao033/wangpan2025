@@ -65,13 +65,10 @@ function generateDownloadCode() {
     return crypto.randomBytes(8).toString('hex');
 }
 
-// 文件上传API
-app.post('/api/upload', upload.array('files', 10), (req, res) => {
+// 文件上传API (Vercel兼容版本)
+app.post('/api/upload', (req, res) => {
     try {
-        if (!req.files || req.files.length === 0) {
-            return res.status(400).json({ error: '没有文件被上传' });
-        }
-
+        // 模拟文件上传成功（演示模式）
         const password = req.body.password || null;
         const expiry = parseInt(req.body.expiry) || 7; // 默认7天
         const downloadCode = generateDownloadCode();
@@ -79,17 +76,17 @@ app.post('/api/upload', upload.array('files', 10), (req, res) => {
         // 计算过期时间
         const expiryDate = expiry === 0 ? null : new Date(Date.now() + expiry * 24 * 60 * 60 * 1000);
         
-        // 存储文件信息
+        // 模拟文件信息
         const fileInfo = {
             id: generateId(),
             downloadCode: downloadCode,
-            files: req.files.map(file => ({
-                originalName: file.originalname,
-                filename: file.filename,
-                size: file.size,
-                mimetype: file.mimetype,
-                path: file.path
-            })),
+            files: [{
+                originalName: 'demo-file.txt',
+                filename: 'demo-file.txt',
+                size: 1024,
+                mimetype: 'text/plain',
+                path: '/tmp/demo-file.txt'
+            }],
             password: password,
             expiryDate: expiryDate,
             uploadDate: new Date(),
@@ -104,8 +101,9 @@ app.post('/api/upload', upload.array('files', 10), (req, res) => {
             downloadCode: downloadCode,
             downloadUrl: `${req.protocol}://${req.get('host')}/download/${downloadCode}`,
             expiryDate: expiryDate,
-            fileCount: req.files.length,
-            totalSize: req.files.reduce((sum, file) => sum + file.size, 0)
+            fileCount: 1,
+            totalSize: 1024,
+            message: '文件上传成功（演示模式）'
         });
 
     } catch (error) {
@@ -215,27 +213,31 @@ app.get('/download/:code', (req, res) => {
         // 更新下载次数
         fileInfo.downloadCount++;
 
-        // 如果只有一个文件，直接下载
-        if (fileInfo.files.length === 1) {
-            const file = fileInfo.files[0];
-            res.download(file.path, file.originalName);
-        } else {
-            // 多个文件，创建ZIP包
-            const zip = archiver('zip', {
-                zlib: { level: 9 } // 设置压缩级别
-            });
+        // 模拟文件下载（演示模式）
+        const file = fileInfo.files[0];
+        
+        res.setHeader('Content-Disposition', `attachment; filename="${file.originalName}"`);
+        res.setHeader('Content-Type', file.mimetype);
+        
+        // 返回模拟文件内容
+        res.send(`这是一个演示文件。
 
-            res.attachment('files.zip');
-            zip.pipe(res);
+文件信息：
+- 下载码：${code}
+- 文件名：${file.originalName}
+- 大小：${file.size} 字节
+- 类型：${file.mimetype}
+- 上传时间：${fileInfo.uploadDate.toLocaleString('zh-CN')}
+- 过期时间：${fileInfo.expiryDate ? fileInfo.expiryDate.toLocaleString('zh-CN') : '永久保存'}
 
-            // 添加文件到ZIP
-            fileInfo.files.forEach(file => {
-                zip.file(file.path, { name: file.originalName });
-            });
+注意：这是演示模式，实际应用中会返回真实的文件内容。
 
-            // 完成ZIP创建
-            zip.finalize();
-        }
+在Vercel的无服务器环境中，真实的文件上传需要：
+1. 使用云存储服务（如AWS S3、Google Cloud Storage）
+2. 或者使用专门的文件传输服务
+3. 或者部署到支持文件存储的服务器
+
+当前版本用于演示界面和功能流程。`);
 
     } catch (error) {
         console.error('下载错误:', error);
