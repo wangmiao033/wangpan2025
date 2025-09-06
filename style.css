@@ -9,114 +9,199 @@ body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.6;
     color: #333;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #f8fafc;
     min-height: 100vh;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 0 20px;
 }
 
 /* 头部样式 */
 .header {
-    text-align: center;
-    margin-bottom: 40px;
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .logo h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    color: white;
-    margin-bottom: 10px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-}
-
-.logo p {
-    font-size: 1.2rem;
-    color: rgba(255,255,255,0.9);
-    font-weight: 300;
-}
-
-/* 主要内容区域 */
-.main-content {
-    background: white;
-    border-radius: 20px;
-    padding: 40px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    margin-bottom: 40px;
-}
-
-/* 上传区域 */
-.upload-section {
-    margin-bottom: 40px;
-}
-
-.upload-container {
-    border: 2px dashed #e0e0e0;
-    border-radius: 15px;
-    padding: 40px;
-    text-align: center;
-    transition: all 0.3s ease;
-    background: #fafafa;
-}
-
-.upload-container.dragover {
-    border-color: #667eea;
-    background: #f0f4ff;
-    transform: scale(1.02);
-}
-
-.upload-area {
-    cursor: pointer;
-}
-
-.upload-icon {
-    font-size: 4rem;
-    margin-bottom: 20px;
-}
-
-.upload-area h3 {
     font-size: 1.5rem;
-    color: #333;
-    margin-bottom: 10px;
-    font-weight: 600;
+    font-weight: 700;
+    color: #1e293b;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
-.upload-area p {
-    color: #666;
-    margin-bottom: 30px;
-    font-size: 1rem;
+.nav-menu {
+    display: flex;
+    gap: 2rem;
 }
 
-.select-btn {
-    background: #667eea;
-    color: white;
-    border: none;
-    padding: 15px 30px;
-    border-radius: 10px;
-    font-size: 1rem;
+.nav-link {
+    color: #64748b;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: #1e293b;
+}
+
+.nav-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
+.btn-secondary:hover {
+    background: #f8fafc;
+    color: #1e293b;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* 主要内容区域 */
+.main-content {
+    padding: 2rem 0;
+}
+
+/* 英雄区域 */
+.hero-section {
+    text-align: center;
+    padding: 4rem 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 20px;
+    margin-bottom: 3rem;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.hero-subtitle {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+}
+
+.hero-description {
+    font-size: 1.2rem;
+    opacity: 0.8;
+}
+
+/* 上传区域 */
+.upload-section {
+    margin-bottom: 3rem;
+}
+
+.upload-container {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 2px dashed #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.upload-container.dragover {
+    border-color: #667eea;
+    background: #f8fafc;
+    transform: scale(1.02);
+}
+
+.upload-area {
+    text-align: center;
+    cursor: pointer;
+}
+
+.upload-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.upload-area h3 {
+    font-size: 1.5rem;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.upload-area p {
+    color: #64748b;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+}
+
+.select-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
 .select-btn:hover {
-    background: #5a6fd8;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
 }
 
 /* 文件列表 */
 .file-list {
-    margin-top: 30px;
+    margin-top: 2rem;
     text-align: left;
 }
 
 .file-list h4 {
-    color: #333;
-    margin-bottom: 15px;
+    color: #1e293b;
+    margin-bottom: 1rem;
     font-weight: 600;
 }
 
@@ -130,51 +215,52 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 15px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    border: 1px solid #e9ecef;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    margin-bottom: 0.5rem;
+    border: 1px solid #e2e8f0;
 }
 
 .file-name {
     font-weight: 500;
-    color: #333;
+    color: #1e293b;
 }
 
 .file-size {
-    color: #666;
+    color: #64748b;
     font-size: 0.9rem;
 }
 
 /* 上传选项 */
 .upload-options {
-    margin-top: 30px;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 10px;
+    margin-top: 2rem;
+    padding: 2rem;
+    background: #f8fafc;
+    border-radius: 16px;
     text-align: left;
 }
 
 .option-group {
-    margin-bottom: 20px;
+    margin-bottom: 1.5rem;
 }
 
 .option-group label {
     display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-    color: #333;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #1e293b;
 }
 
 .option-group input,
 .option-group select {
     width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #ddd;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
     border-radius: 8px;
     font-size: 1rem;
     transition: border-color 0.3s ease;
+    background: white;
 }
 
 .option-group input:focus,
@@ -186,11 +272,11 @@ body {
 
 .upload-btn {
     width: 100%;
-    background: #28a745;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
     border: none;
-    padding: 15px 30px;
-    border-radius: 10px;
+    padding: 1rem 2rem;
+    border-radius: 12px;
     font-size: 1.1rem;
     font-weight: 600;
     cursor: pointer;
@@ -200,13 +286,12 @@ body {
 }
 
 .upload-btn:hover {
-    background: #218838;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
 }
 
 .upload-btn:disabled {
-    background: #6c757d;
+    background: #94a3b8;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
@@ -217,7 +302,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 0.5rem;
 }
 
 .spinner {
@@ -236,34 +321,41 @@ body {
 
 /* 下载区域 */
 .download-section {
-    margin-bottom: 40px;
+    margin-bottom: 3rem;
 }
 
 .download-container {
-    background: #f8f9fa;
-    padding: 30px;
-    border-radius: 15px;
+    background: white;
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     text-align: center;
 }
 
 .download-container h3 {
-    color: #333;
-    margin-bottom: 20px;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
     font-weight: 600;
+    font-size: 1.5rem;
+}
+
+.download-container p {
+    color: #64748b;
+    margin-bottom: 2rem;
 }
 
 .download-input {
     display: flex;
-    gap: 15px;
+    gap: 1rem;
     max-width: 600px;
     margin: 0 auto;
 }
 
 .download-input input {
     flex: 1;
-    padding: 15px 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
     font-size: 1rem;
     transition: border-color 0.3s ease;
 }
@@ -275,92 +367,91 @@ body {
 }
 
 .download-input button {
-    background: #007bff;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
-    padding: 15px 30px;
-    border-radius: 10px;
+    padding: 1rem 2rem;
+    border-radius: 12px;
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     white-space: nowrap;
 }
 
 .download-input button:hover {
-    background: #0056b3;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
 }
 
 /* 结果区域 */
 .result-section {
-    margin-top: 30px;
-    padding: 30px;
-    background: #d4edda;
-    border: 1px solid #c3e6cb;
-    border-radius: 15px;
+    margin-top: 2rem;
+    padding: 2rem;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 16px;
 }
 
 .result-container h3 {
-    color: #155724;
-    margin-bottom: 20px;
+    color: #166534;
+    margin-bottom: 1.5rem;
     font-weight: 600;
 }
 
 .result-info {
-    margin-bottom: 25px;
+    margin-bottom: 2rem;
 }
 
 .info-item {
     display: flex;
     align-items: center;
-    margin-bottom: 15px;
-    padding: 10px;
+    margin-bottom: 1rem;
+    padding: 1rem;
     background: white;
     border-radius: 8px;
-    border: 1px solid #c3e6cb;
+    border: 1px solid #bbf7d0;
 }
 
 .info-item label {
-    font-weight: 500;
-    color: #333;
+    font-weight: 600;
+    color: #1e293b;
     min-width: 100px;
-    margin-right: 15px;
+    margin-right: 1rem;
 }
 
 .info-item span {
     flex: 1;
-    color: #666;
+    color: #64748b;
     font-family: monospace;
     word-break: break-all;
 }
 
 .copy-btn {
-    background: #007bff;
+    background: #667eea;
     color: white;
     border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin-left: 10px;
+    margin-left: 1rem;
 }
 
 .copy-btn:hover {
-    background: #0056b3;
+    background: #5a6fd8;
 }
 
 .result-actions {
     display: flex;
-    gap: 15px;
+    gap: 1rem;
     justify-content: center;
 }
 
 .share-btn,
 .new-upload-btn {
-    padding: 12px 25px;
+    padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 8px;
     font-size: 1rem;
@@ -370,34 +461,34 @@ body {
 }
 
 .share-btn {
-    background: #17a2b8;
+    background: #0ea5e9;
     color: white;
 }
 
 .share-btn:hover {
-    background: #138496;
+    background: #0284c7;
 }
 
 .new-upload-btn {
-    background: #6c757d;
+    background: #64748b;
     color: white;
 }
 
 .new-upload-btn:hover {
-    background: #5a6268;
+    background: #475569;
 }
 
 /* 错误提示 */
 .error-message {
-    background: #f8d7da;
-    color: #721c24;
-    padding: 15px 20px;
-    border: 1px solid #f5c6cb;
+    background: #fef2f2;
+    color: #dc2626;
+    padding: 1rem 1.5rem;
+    border: 1px solid #fecaca;
     border-radius: 8px;
-    margin: 20px 0;
+    margin: 1rem 0;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0.5rem;
 }
 
 .error-icon {
@@ -407,31 +498,35 @@ body {
 /* 功能特点 */
 .features {
     background: white;
-    border-radius: 20px;
-    padding: 40px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    margin-bottom: 40px;
+    padding: 4rem 0;
+    margin: 3rem 0;
 }
 
-.features h3 {
+.features-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.features-title {
     text-align: center;
-    color: #333;
-    margin-bottom: 30px;
-    font-size: 2rem;
-    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+    font-weight: 700;
 }
 
 .feature-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
 }
 
 .feature-item {
-    text-align: center;
-    padding: 20px;
-    border-radius: 15px;
-    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 16px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
     transition: transform 0.3s ease;
 }
 
@@ -441,43 +536,82 @@ body {
 
 .feature-icon {
     font-size: 3rem;
-    margin-bottom: 15px;
+    margin-bottom: 1rem;
 }
 
-.feature-item h4 {
-    color: #333;
-    margin-bottom: 10px;
+.feature-item h3 {
+    color: #1e293b;
+    margin-bottom: 1rem;
     font-weight: 600;
+    font-size: 1.25rem;
 }
 
 .feature-item p {
-    color: #666;
-    font-size: 0.9rem;
+    color: #64748b;
+    line-height: 1.7;
 }
 
 /* 页脚 */
 .footer {
+    background: #1e293b;
+    color: white;
+    padding: 3rem 0;
+    margin-top: 4rem;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
     text-align: center;
-    color: rgba(255,255,255,0.8);
-    padding: 20px 0;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.footer-links a {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: white;
+}
+
+.footer-copyright {
+    color: #94a3b8;
+    font-size: 0.9rem;
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
     .container {
-        padding: 10px;
+        padding: 0 1rem;
     }
     
-    .main-content {
-        padding: 20px;
+    .nav-container {
+        flex-direction: column;
+        gap: 1rem;
     }
     
-    .logo h1 {
+    .nav-menu {
+        gap: 1rem;
+    }
+    
+    .hero-title {
         font-size: 2rem;
     }
     
+    .hero-subtitle {
+        font-size: 1.5rem;
+    }
+    
     .upload-container {
-        padding: 20px;
+        padding: 2rem;
     }
     
     .download-input {
@@ -491,7 +625,7 @@ body {
     .info-item {
         flex-direction: column;
         align-items: flex-start;
-        gap: 10px;
+        gap: 0.5rem;
     }
     
     .info-item label {
@@ -503,18 +637,19 @@ body {
         margin-left: 0;
         align-self: flex-start;
     }
+    
+    .footer-links {
+        flex-direction: column;
+        gap: 1rem;
+    }
 }
 
 @media (max-width: 480px) {
-    .logo h1 {
+    .hero-title {
         font-size: 1.5rem;
     }
     
-    .logo p {
-        font-size: 1rem;
-    }
-    
-    .upload-area h3 {
+    .hero-subtitle {
         font-size: 1.2rem;
     }
     

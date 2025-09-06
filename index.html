@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>免费大文件传输 - 无文件大小限制</title>
+    <title>file.kiwi - 免费大文件传输</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,23 +11,42 @@
 </head>
 <body>
     <div class="container">
-        <!-- 头部 -->
+        <!-- 头部导航 -->
         <header class="header">
-            <div class="logo">
-                <h1>📁 文件传输</h1>
-                <p>免费 · 快速 · 安全</p>
+            <div class="nav-container">
+                <div class="logo">
+                    <h1>file.kiwi</h1>
+                </div>
+                <nav class="nav-menu">
+                    <a href="#features" class="nav-link">特征</a>
+                    <a href="#pricing" class="nav-link">价格</a>
+                    <a href="#help" class="nav-link">帮助</a>
+                </nav>
+                <div class="nav-actions">
+                    <button class="btn-secondary">登录</button>
+                    <button class="btn-primary">注册</button>
+                </div>
             </div>
         </header>
 
         <!-- 主要内容区域 -->
         <main class="main-content">
+            <!-- 英雄区域 -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h1 class="hero-title">轻松简单</h1>
+                    <h2 class="hero-subtitle">免费大文件传输</h2>
+                    <p class="hero-description">没有文件大小限制。文件已加密。</p>
+                </div>
+            </section>
+
             <!-- 上传区域 -->
             <section class="upload-section">
                 <div class="upload-container">
                     <div class="upload-area" id="uploadArea">
-                        <div class="upload-icon">📤</div>
-                        <h3>拖拽文件到这里或点击选择</h3>
-                        <p>支持任意大小文件，无限制传输</p>
+                        <div class="upload-icon">📁</div>
+                        <h3>选择文件</h3>
+                        <p>拖拽文件到这里或点击选择</p>
                         <input type="file" id="fileInput" multiple hidden>
                         <button class="select-btn" onclick="document.getElementById('fileInput').click()">
                             选择文件
@@ -43,7 +62,7 @@
                     <!-- 上传选项 -->
                     <div class="upload-options" id="uploadOptions" style="display: none;">
                         <div class="option-group">
-                            <label for="password">密码保护（可选）：</label>
+                            <label for="password">设置密码 🔒</label>
                             <input type="text" id="password" placeholder="设置访问密码">
                         </div>
                         
@@ -71,10 +90,11 @@
             <!-- 下载区域 -->
             <section class="download-section">
                 <div class="download-container">
-                    <h3>📥 下载文件</h3>
+                    <h3>🗂️ 打开新的web文件夹</h3>
+                    <p>创建文件交换存储空间。</p>
                     <div class="download-input">
                         <input type="text" id="downloadCode" placeholder="输入下载码或粘贴下载链接">
-                        <button onclick="downloadFile()">获取文件</button>
+                        <button onclick="downloadFile()">打开</button>
                     </div>
                 </div>
             </section>
@@ -114,35 +134,49 @@
         </main>
 
         <!-- 功能特点 -->
-        <section class="features">
-            <h3>✨ 功能特点</h3>
-            <div class="feature-grid">
-                <div class="feature-item">
-                    <div class="feature-icon">🚀</div>
-                    <h4>无文件大小限制</h4>
-                    <p>支持任意大小的文件传输</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">🔒</div>
-                    <h4>密码保护</h4>
-                    <p>为文件设置访问密码</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">⏰</div>
-                    <h4>自动过期</h4>
-                    <p>文件到期自动删除</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">📱</div>
-                    <h4>响应式设计</h4>
-                    <p>完美支持各种设备</p>
+        <section class="features" id="features">
+            <div class="features-container">
+                <h2 class="features-title">坚实的基础，强大的功能</h2>
+                
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">🚀</div>
+                        <h3>无限制文件上传，即时无阻碍地继续进行。</h3>
+                        <p>我们不限制文件大小。无论是10G还是500G，都没有限制。您可以上传所有类型的文件，包括视频、文档和图片。我们不会因文件大小而中断广告观看/注册/等待/缓慢上传策略。现在尝试一次性分享最大的文件，无需分割。</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">🔒</div>
+                        <h3>安全传输且不保留原始存储，彻底销毁。</h3>
+                        <p>我们使用端到端加密（端到端 128 位 AES-GCM），不在服务器上储存原始文件。因此，与典型的云存储服务不同，原始文件不会存储在我们的服务器上。连文件名也是加密的。没有可共享的链接作为解密密钥，原始文件无法被读取，且不受审查或监控的影响。</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">📁</div>
+                        <h3>便捷的共享文件夹和批量任务</h3>
+                        <p>由于共享单位是一个文件夹（即web文件夹），可以一次性传送多个文件。就像将文件放入文件夹一样，拖放即可立即开始上传。可以一次性上传许多文件。</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">⚡</div>
+                        <h3>实时共享</h3>
+                        <p>您可以在上传开始后立即分享文件，这意味着无需等待上传完成100%即可分享文件。这大大缩短了分享时间，特别是对于大文件而言。无论文件大小是50GB还是100GB，分享都可以在短短10秒内实时开始。</p>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- 页脚 -->
         <footer class="footer">
-            <p>&copy; 2024 文件传输网站 - 免费使用</p>
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="#privacy">隐私政策</a>
+                    <a href="#terms">使用条款</a>
+                    <a href="#help">帮助</a>
+                    <a href="#contact">联系我们</a>
+                </div>
+                <p class="footer-copyright">&copy; file.kiwi 2024 All rights reserved</p>
+            </div>
         </footer>
     </div>
 
