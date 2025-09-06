@@ -6,30 +6,55 @@ class FileTransferApp {
     }
 
     init() {
+        console.log('FileTransferApp initializing...');
         this.setupEventListeners();
         this.setupDragAndDrop();
+        console.log('FileTransferApp initialized successfully');
     }
 
     setupEventListeners() {
+        console.log('Setting up event listeners...');
+        
         // 文件选择
         const fileInput = document.getElementById('fileInput');
-        fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
+        if (fileInput) {
+            fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
+            console.log('File input listener added');
+        } else {
+            console.error('File input element not found');
+        }
 
         // 下载按钮
         const downloadBtn = document.querySelector('.download-input button');
-        downloadBtn.addEventListener('click', () => this.downloadFile());
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', () => this.downloadFile());
+            console.log('Download button listener added');
+        } else {
+            console.error('Download button not found');
+        }
 
         // 回车键下载
         const downloadInput = document.getElementById('downloadCode');
-        downloadInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                this.downloadFile();
-            }
-        });
+        if (downloadInput) {
+            downloadInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.downloadFile();
+                }
+            });
+            console.log('Download input listener added');
+        } else {
+            console.error('Download input not found');
+        }
     }
 
     setupDragAndDrop() {
+        console.log('Setting up drag and drop...');
         const uploadArea = document.getElementById('uploadArea');
+        
+        if (!uploadArea) {
+            console.error('Upload area element not found');
+            return;
+        }
         
         // 阻止默认拖拽行为
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -48,6 +73,7 @@ class FileTransferApp {
 
         // 处理文件拖放
         uploadArea.addEventListener('drop', (e) => this.handleDrop(e), false);
+        console.log('Drag and drop setup complete');
     }
 
     preventDefaults(e) {
@@ -362,3 +388,21 @@ function resetUpload() {
 
 // 初始化应用
 const app = new FileTransferApp();
+
+// 添加全局测试函数
+window.testApp = function() {
+    console.log('Testing app functionality...');
+    console.log('Selected files:', app.selectedFiles);
+    console.log('File input element:', document.getElementById('fileInput'));
+    console.log('Download button:', document.querySelector('.download-input button'));
+    console.log('Download input:', document.getElementById('downloadCode'));
+    console.log('Upload area:', document.getElementById('uploadArea'));
+};
+
+// 页面加载完成后测试
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, testing app...');
+    setTimeout(() => {
+        window.testApp();
+    }, 1000);
+});
