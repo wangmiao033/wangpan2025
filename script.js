@@ -1,145 +1,125 @@
-// 文件传输网站 JavaScript 功能
+// 文件传输网站前端功能
 class FileTransferApp {
     constructor() {
         this.selectedFiles = [];
-        this.uploadInProgress = false;
-        this.initializeElements();
-        this.bindEvents();
+        this.init();
     }
 
-    initializeElements() {
-        // 获取DOM元素
-        this.uploadZone = document.getElementById('uploadZone');
-        this.fileInput = document.getElementById('fileInput');
-        this.uploadBtn = document.getElementById('uploadBtn');
-        this.fileList = document.getElementById('fileList');
-        this.files = document.getElementById('files');
-        this.uploadOptions = document.getElementById('uploadOptions');
-        this.startUploadBtn = document.getElementById('startUploadBtn');
-        this.uploadProgress = document.getElementById('uploadProgress');
-        this.progressFill = document.getElementById('progressFill');
-        this.progressText = document.getElementById('progressText');
-        this.cancelBtn = document.getElementById('cancelBtn');
-        this.uploadComplete = document.getElementById('uploadComplete');
-        this.downloadLink = document.getElementById('downloadLink');
-        this.copyBtn = document.getElementById('copyBtn');
-        this.shareBtn = document.getElementById('shareBtn');
-        this.newUploadBtn = document.getElementById('newUploadBtn');
-        this.downloadCode = document.getElementById('downloadCode');
-        this.downloadBtn = document.getElementById('downloadBtn');
-        this.modal = document.getElementById('modal');
-        this.modalBody = document.getElementById('modalBody');
-        this.closeModal = document.getElementById('closeModal');
+    init() {
+        this.setupEventListeners();
+        this.setupDragAndDrop();
     }
 
-    bindEvents() {
-        // 上传区域事件
-        this.uploadZone.addEventListener('click', () => this.fileInput.click());
-        this.uploadZone.addEventListener('dragover', (e) => this.handleDragOver(e));
-        this.uploadZone.addEventListener('dragleave', (e) => this.handleDragLeave(e));
-        this.uploadZone.addEventListener('drop', (e) => this.handleDrop(e));
-        
-        // 文件选择事件
-        this.fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
-        
-        // 按钮事件
-        this.startUploadBtn.addEventListener('click', () => this.startUpload());
-        this.cancelBtn.addEventListener('click', () => this.cancelUpload());
-        this.copyBtn.addEventListener('click', () => this.copyLink());
-        this.shareBtn.addEventListener('click', () => this.shareLink());
-        this.newUploadBtn.addEventListener('click', () => this.resetUpload());
-        this.downloadBtn.addEventListener('click', () => this.handleDownload());
-        
-        // 模态框事件
-        this.closeModal.addEventListener('click', () => this.closeModalWindow());
-        this.modal.addEventListener('click', (e) => {
-            if (e.target === this.modal) this.closeModalWindow();
-        });
-        
-        // 键盘事件
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') this.closeModalWindow();
+    setupEventListeners() {
+        // 文件选择
+        const fileInput = document.getElementById('fileInput');
+        fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
+
+        // 下载按钮
+        const downloadBtn = document.querySelector('.download-input button');
+        downloadBtn.addEventListener('click', () => this.downloadFile());
+
+        // 回车键下载
+        const downloadInput = document.getElementById('downloadCode');
+        downloadInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.downloadFile();
+            }
         });
     }
 
-    // 拖拽处理
-    handleDragOver(e) {
-        e.preventDefault();
-        this.uploadZone.classList.add('dragover');
+    setupDragAndDrop() {
+        const uploadArea = document.getElementById('uploadArea');
+        
+        // 阻止默认拖拽行为
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, this.preventDefaults, false);
+            document.body.addEventListener(eventName, this.preventDefaults, false);
+        });
+
+        // 高亮拖拽区域
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => this.highlight(uploadArea), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => this.unhighlight(uploadArea), false);
+        });
+
+        // 处理文件拖放
+        uploadArea.addEventListener('drop', (e) => this.handleDrop(e), false);
     }
 
-    handleDragLeave(e) {
+    preventDefaults(e) {
         e.preventDefault();
-        this.uploadZone.classList.remove('dragover');
+        e.stopPropagation();
+    }
+
+    highlight(element) {
+        element.classList.add('dragover');
+    }
+
+    unhighlight(element) {
+        element.classList.remove('dragover');
     }
 
     handleDrop(e) {
-        e.preventDefault();
-        this.uploadZone.classList.remove('dragover');
-        const files = Array.from(e.dataTransfer.files);
-        this.addFiles(files);
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        this.handleFiles(files);
     }
 
-    // 文件选择处理
     handleFileSelect(e) {
-        const files = Array.from(e.target.files);
-        this.addFiles(files);
+        const files = e.target.files;
+        this.handleFiles(files);
     }
 
-    addFiles(files) {
-        files.forEach(file => {
-            if (!this.selectedFiles.find(f => f.name === file.name && f.size === file.size)) {
-                this.selectedFiles.push(file);
-            }
-        });
-        this.updateFileList();
+    handleFiles(files) {
+        this.selectedFiles = Array.from(files);
+        this.displaySelectedFiles();
         this.showUploadOptions();
     }
 
-    updateFileList() {
+    displaySelectedFiles() {
+        const fileList = document.getElementById('fileList');
+        const selectedFiles = document.getElementById('selectedFiles');
+        
         if (this.selectedFiles.length === 0) {
-            this.fileList.style.display = 'none';
+            fileList.style.display = 'none';
             return;
         }
 
-        this.fileList.style.display = 'block';
-        this.files.innerHTML = '';
+        fileList.style.display = 'block';
+        selectedFiles.innerHTML = '';
 
         this.selectedFiles.forEach((file, index) => {
-            const fileItem = document.createElement('div');
-            fileItem.className = 'file-item';
-            fileItem.innerHTML = `
-                <div class="file-info">
-                    <div class="file-icon">${this.getFileIcon(file.type)}</div>
-                    <div class="file-details">
-                        <h4>${file.name}</h4>
-                        <p>${this.formatFileSize(file.size)}</p>
-                    </div>
-                </div>
-                <button class="remove-file" onclick="app.removeFile(${index})">删除</button>
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span class="file-name">${file.name}</span>
+                <span class="file-size">${this.formatFileSize(file.size)}</span>
+                <button class="remove-btn" onclick="app.removeFile(${index})">×</button>
             `;
-            this.files.appendChild(fileItem);
+            selectedFiles.appendChild(li);
         });
     }
 
     removeFile(index) {
         this.selectedFiles.splice(index, 1);
-        this.updateFileList();
+        this.displaySelectedFiles();
+        
         if (this.selectedFiles.length === 0) {
-            this.uploadOptions.style.display = 'none';
+            this.hideUploadOptions();
         }
     }
 
-    getFileIcon(type) {
-        if (type.startsWith('image/')) return '🖼️';
-        if (type.startsWith('video/')) return '🎥';
-        if (type.startsWith('audio/')) return '🎵';
-        if (type.includes('pdf')) return '📄';
-        if (type.includes('word')) return '📝';
-        if (type.includes('excel') || type.includes('spreadsheet')) return '📊';
-        if (type.includes('powerpoint') || type.includes('presentation')) return '📈';
-        if (type.includes('zip') || type.includes('rar')) return '📦';
-        return '📁';
+    showUploadOptions() {
+        const uploadOptions = document.getElementById('uploadOptions');
+        uploadOptions.style.display = 'block';
+    }
+
+    hideUploadOptions() {
+        const uploadOptions = document.getElementById('uploadOptions');
+        uploadOptions.style.display = 'none';
     }
 
     formatFileSize(bytes) {
@@ -150,359 +130,235 @@ class FileTransferApp {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 
-    showUploadOptions() {
-        if (this.selectedFiles.length > 0) {
-            this.uploadOptions.style.display = 'block';
-        }
-    }
-
-    // 上传处理
-    async startUpload() {
+    async uploadFiles() {
         if (this.selectedFiles.length === 0) {
-            this.showMessage('请先选择要上传的文件', 'error');
+            this.showError('请先选择要上传的文件');
             return;
         }
 
-        this.uploadInProgress = true;
-        this.showUploadProgress();
-        
+        const uploadBtn = document.getElementById('uploadBtn');
+        const btnText = uploadBtn.querySelector('.btn-text');
+        const loading = uploadBtn.querySelector('.loading');
+
+        // 显示加载状态
+        btnText.style.display = 'none';
+        loading.style.display = 'flex';
+        uploadBtn.disabled = true;
+
         try {
             const formData = new FormData();
+            
+            // 添加文件
             this.selectedFiles.forEach(file => {
                 formData.append('files', file);
             });
-            
+
+            // 添加选项
             const password = document.getElementById('password').value;
             const expiry = document.getElementById('expiry').value;
-            
-            if (password) formData.append('password', password);
+
+            if (password) {
+                formData.append('password', password);
+            }
             formData.append('expiry', expiry);
 
-            // 使用 Vercel API 上传
-            await this.uploadToVercel(formData);
-            
-        } catch (error) {
-            this.showMessage('上传失败: ' + error.message, 'error');
-            this.hideUploadProgress();
-        }
-    }
-
-    async uploadToVercel(formData) {
-        try {
+            // 发送上传请求
             const response = await fetch('/api/upload', {
                 method: 'POST',
                 body: formData
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || '上传失败');
+            const result = await response.json();
+
+            if (result.success) {
+                this.showUploadResult(result);
+            } else {
+                throw new Error(result.error || '上传失败');
             }
 
-            const result = await response.json();
-            
-            // 显示上传完成
-            this.uploadInProgress = false;
-            this.showUploadComplete(result);
-            
         } catch (error) {
-            throw error;
+            console.error('上传错误:', error);
+            this.showError('上传失败: ' + error.message);
+        } finally {
+            // 恢复按钮状态
+            btnText.style.display = 'block';
+            loading.style.display = 'none';
+            uploadBtn.disabled = false;
         }
     }
 
-    async simulateUpload(formData) {
-        const totalSize = this.selectedFiles.reduce((sum, file) => sum + file.size, 0);
-        let uploadedSize = 0;
+    showUploadResult(result) {
+        const resultSection = document.getElementById('resultSection');
+        const resultCode = document.getElementById('resultCode');
+        const resultUrl = document.getElementById('resultUrl');
+        const resultExpiry = document.getElementById('resultExpiry');
+
+        resultCode.textContent = result.downloadCode;
+        resultUrl.textContent = result.downloadUrl;
         
-        return new Promise((resolve, reject) => {
-            const interval = setInterval(() => {
-                if (!this.uploadInProgress) {
-                    clearInterval(interval);
-                    reject(new Error('上传已取消'));
-                    return;
-                }
-
-                // 模拟上传进度
-                uploadedSize += totalSize * 0.1;
-                const progress = Math.min((uploadedSize / totalSize) * 100, 100);
-                
-                this.updateProgress(progress);
-                
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    this.uploadInProgress = false;
-                    this.showUploadComplete();
-                    resolve();
-                }
-            }, 200);
-        });
-    }
-
-    showUploadProgress() {
-        this.uploadOptions.style.display = 'none';
-        this.uploadProgress.style.display = 'block';
-        this.updateProgress(0);
-    }
-
-    hideUploadProgress() {
-        this.uploadProgress.style.display = 'none';
-        this.uploadInProgress = false;
-    }
-
-    updateProgress(progress) {
-        this.progressFill.style.width = progress + '%';
-        this.progressText.textContent = Math.round(progress) + '%';
-    }
-
-    cancelUpload() {
-        this.uploadInProgress = false;
-        this.hideUploadProgress();
-        this.showUploadOptions();
-        this.showMessage('上传已取消', 'error');
-    }
-
-    showUploadComplete(result = null) {
-        this.uploadProgress.style.display = 'none';
-        this.uploadComplete.style.display = 'block';
-        
-        let downloadUrl;
-        if (result && result.downloadUrl) {
-            // 使用真实的下载链接
-            downloadUrl = result.downloadUrl;
+        if (result.expiryDate) {
+            const expiryDate = new Date(result.expiryDate);
+            resultExpiry.textContent = expiryDate.toLocaleString('zh-CN');
         } else {
-            // 生成模拟下载链接（兼容旧版本）
-            const downloadCode = this.generateDownloadCode();
-            downloadUrl = `${window.location.origin}/api/download/${downloadCode}`;
+            resultExpiry.textContent = '永久保存';
         }
-        
-        this.downloadLink.value = downloadUrl;
-        
-        // 自动复制链接
-        this.copyLink();
+
+        resultSection.style.display = 'block';
+        resultSection.scrollIntoView({ behavior: 'smooth' });
+
+        // 隐藏上传区域
+        document.querySelector('.upload-section').style.display = 'none';
     }
 
-    generateDownloadCode() {
-        return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    }
-
-    copyLink() {
-        this.downloadLink.select();
-        this.downloadLink.setSelectionRange(0, 99999);
-        document.execCommand('copy');
+    async downloadFile() {
+        const downloadCode = document.getElementById('downloadCode').value.trim();
         
-        // 显示复制成功提示
-        const linkNote = document.querySelector('.link-note');
-        linkNote.style.display = 'block';
-        setTimeout(() => {
-            linkNote.style.display = 'none';
-        }, 3000);
-    }
-
-    shareLink() {
-        if (navigator.share) {
-            navigator.share({
-                title: '文件分享',
-                text: '我分享了一些文件给你',
-                url: this.downloadLink.value
-            });
-        } else {
-            this.copyLink();
-            this.showMessage('链接已复制到剪贴板', 'success');
-        }
-    }
-
-    resetUpload() {
-        this.selectedFiles = [];
-        this.fileInput.value = '';
-        document.getElementById('password').value = '';
-        document.getElementById('expiry').value = '7';
-        
-        this.fileList.style.display = 'none';
-        this.uploadOptions.style.display = 'none';
-        this.uploadProgress.style.display = 'none';
-        this.uploadComplete.style.display = 'none';
-        
-        this.showMessage('已重置，可以上传新文件', 'success');
-    }
-
-    // 下载处理
-    async handleDownload() {
-        const code = this.downloadCode.value.trim();
-        if (!code) {
-            this.showMessage('请输入下载码或链接', 'error');
+        if (!downloadCode) {
+            this.showError('请输入下载码或下载链接');
             return;
         }
 
         try {
             // 提取下载码
-            let downloadCode = code;
-            if (code.includes('/api/download/')) {
-                downloadCode = code.split('/api/download/')[1];
-            } else if (code.includes('/download/')) {
-                downloadCode = code.split('/download/')[1];
+            let code = downloadCode;
+            if (downloadCode.includes('/download/')) {
+                code = downloadCode.split('/download/')[1];
             }
 
-            this.showMessage('正在获取文件信息...', 'success');
-            
-            // 调用 Vercel API 获取文件信息
-            const response = await fetch(`/api/file/${downloadCode}`);
-            
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || '获取文件失败');
-            }
-
+            // 获取文件信息
+            const response = await fetch(`/api/file/${code}`);
             const fileInfo = await response.json();
-            
+
+            if (!fileInfo.success) {
+                throw new Error(fileInfo.error || '文件不存在');
+            }
+
+            // 检查是否需要密码
             if (fileInfo.hasPassword) {
-                // 需要密码，显示密码输入框
-                this.showPasswordModal(downloadCode);
+                const password = prompt('请输入文件密码:');
+                if (!password) {
+                    return;
+                }
+
+                // 验证密码
+                const verifyResponse = await fetch(`/api/verify-password/${code}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ password })
+                });
+
+                const verifyResult = await verifyResponse.json();
+                if (!verifyResult.success) {
+                    this.showError('密码错误');
+                    return;
+                }
+
+                // 使用密码下载
+                window.open(`/download/${code}?password=${encodeURIComponent(password)}`, '_blank');
             } else {
                 // 直接下载
-                this.downloadFile(downloadCode);
-            }
-            
-        } catch (error) {
-            this.showMessage('获取文件失败: ' + error.message, 'error');
-        }
-    }
-
-    showPasswordModal(downloadCode) {
-        const password = prompt('请输入文件密码:');
-        if (password) {
-            this.verifyPasswordAndDownload(downloadCode, password);
-        }
-    }
-
-    async verifyPasswordAndDownload(downloadCode, password) {
-        try {
-            const response = await fetch(`/api/verify-password/${downloadCode}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ password })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || '密码验证失败');
+                window.open(`/download/${code}`, '_blank');
             }
 
-            this.downloadFile(downloadCode, password);
-            
         } catch (error) {
-            this.showMessage('密码验证失败: ' + error.message, 'error');
+            console.error('下载错误:', error);
+            this.showError('下载失败: ' + error.message);
         }
     }
 
-    downloadFile(downloadCode, password = null) {
-        let downloadUrl = `/api/download/${downloadCode}`;
-        if (password) {
-            downloadUrl += `?password=${encodeURIComponent(password)}`;
-        }
+    showError(message) {
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = errorMessage.querySelector('.error-text');
         
-        // 创建隐藏的下载链接
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.download = '';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        errorText.textContent = message;
+        errorMessage.style.display = 'flex';
         
-        this.showMessage('文件下载已开始！', 'success');
-    }
-
-    // 消息显示
-    showMessage(message, type = 'success') {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `${type}-message`;
-        messageDiv.textContent = message;
-        
-        // 插入到页面顶部
-        const container = document.querySelector('.container');
-        container.insertBefore(messageDiv, container.firstChild);
-        
-        // 3秒后自动移除
+        // 3秒后自动隐藏
         setTimeout(() => {
-            if (messageDiv.parentNode) {
-                messageDiv.parentNode.removeChild(messageDiv);
-            }
+            errorMessage.style.display = 'none';
         }, 3000);
     }
 
-    // 模态框处理
-    showModal(content) {
-        this.modalBody.innerHTML = content;
-        this.modal.style.display = 'block';
-    }
-
-    closeModalWindow() {
-        this.modal.style.display = 'none';
-    }
-
-    // 工具方法
-    formatDate(date) {
-        return new Intl.DateTimeFormat('zh-CN', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit'
-        }).format(date);
-    }
-
-    // 文件类型验证
-    validateFileType(file) {
-        const allowedTypes = [
-            'image/', 'video/', 'audio/', 'text/',
-            'application/pdf', 'application/msword',
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'application/vnd.ms-excel',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'application/vnd.ms-powerpoint',
-            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-            'application/zip', 'application/x-rar-compressed'
-        ];
+    copyToClipboard(elementId) {
+        const element = document.getElementById(elementId);
+        const text = element.textContent;
         
-        return allowedTypes.some(type => file.type.startsWith(type));
+        navigator.clipboard.writeText(text).then(() => {
+            // 显示复制成功提示
+            const btn = element.nextElementSibling;
+            const originalText = btn.textContent;
+            btn.textContent = '已复制!';
+            btn.style.background = '#28a745';
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '#007bff';
+            }, 2000);
+        }).catch(err => {
+            console.error('复制失败:', err);
+            this.showError('复制失败，请手动复制');
+        });
     }
 
-    // 文件大小验证
-    validateFileSize(file) {
-        const maxSize = 10 * 1024 * 1024 * 1024; // 10GB
-        return file.size <= maxSize;
+    shareResult() {
+        const resultUrl = document.getElementById('resultUrl').textContent;
+        
+        if (navigator.share) {
+            navigator.share({
+                title: '文件分享',
+                text: '我分享了一个文件给您',
+                url: resultUrl
+            });
+        } else {
+            this.copyToClipboard('resultUrl');
+        }
+    }
+
+    resetUpload() {
+        // 重置所有状态
+        this.selectedFiles = [];
+        document.getElementById('fileInput').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('expiry').value = '7';
+        document.getElementById('downloadCode').value = '';
+        
+        // 隐藏结果区域
+        document.getElementById('resultSection').style.display = 'none';
+        
+        // 显示上传区域
+        document.querySelector('.upload-section').style.display = 'block';
+        
+        // 隐藏文件列表和选项
+        this.hideUploadOptions();
+        document.getElementById('fileList').style.display = 'none';
+        
+        // 滚动到顶部
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 }
 
+// 全局函数（为了HTML中的onclick事件）
+function uploadFiles() {
+    app.uploadFiles();
+}
+
+function downloadFile() {
+    app.downloadFile();
+}
+
+function copyToClipboard(elementId) {
+    app.copyToClipboard(elementId);
+}
+
+function shareResult() {
+    app.shareResult();
+}
+
+function resetUpload() {
+    app.resetUpload();
+}
+
 // 初始化应用
-let app;
-document.addEventListener('DOMContentLoaded', () => {
-    app = new FileTransferApp();
-    
-    // 添加一些示例功能
-    console.log('文件传输网站已加载');
-    
-    // 检查浏览器兼容性
-    if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
-        app.showMessage('您的浏览器不支持文件上传功能，请升级浏览器', 'error');
-    }
-});
-
-// 全局错误处理
-window.addEventListener('error', (e) => {
-    console.error('全局错误:', e.error);
-    if (app) {
-        app.showMessage('发生了一个错误，请刷新页面重试', 'error');
-    }
-});
-
-// 页面可见性变化处理
-document.addEventListener('visibilitychange', () => {
-    if (document.hidden && app && app.uploadInProgress) {
-        console.log('页面隐藏，但上传继续进行');
-    }
-});
-
-// 导出给全局使用
-window.app = app;
+const app = new FileTransferApp();

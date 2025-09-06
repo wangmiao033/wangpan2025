@@ -1,4 +1,4 @@
-// Node.js 后端服务器 - 文件传输API
+// 本地测试脚本
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
@@ -6,13 +6,12 @@ import fs from 'fs';
 import crypto from 'crypto';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
-import archiver from 'archiver';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 // 中间件配置
 app.use(cors());
@@ -36,29 +35,16 @@ const storage = multer.diskStorage({
     }
 });
 
-// 文件过滤器
-const fileFilter = (req, file, cb) => {
-    // 允许所有文件类型，但可以在这里添加限制
-    cb(null, true);
-};
-
-// 上传配置
 const upload = multer({
     storage: storage,
-    fileFilter: fileFilter,
     limits: {
-        fileSize: 10 * 1024 * 1024 * 1024, // 10GB 限制
-        files: 10 // 最多10个文件
+        fileSize: 10 * 1024 * 1024 * 1024, // 10GB
+        files: 10
     }
 });
 
-// 文件信息存储（实际应用中应使用数据库）
+// 文件信息存储
 const fileDatabase = new Map();
-
-// 生成唯一ID
-function generateId() {
-    return crypto.randomBytes(16).toString('hex');
-}
 
 // 生成下载码
 function generateDownloadCode() {
@@ -73,15 +59,13 @@ app.post('/api/upload', upload.array('files', 10), (req, res) => {
         }
 
         const password = req.body.password || null;
-        const expiry = parseInt(req.body.expiry) || 7; // 默认7天
+        const expiry = parseInt(req.body.expiry) || 7;
         const downloadCode = generateDownloadCode();
         
-        // 计算过期时间
         const expiryDate = expiry === 0 ? null : new Date(Date.now() + expiry * 24 * 60 * 60 * 1000);
         
-        // 存储文件信息
         const fileInfo = {
-            id: generateId(),
+            id: crypto.randomBytes(16).toString('hex'),
             downloadCode: downloadCode,
             files: req.files.map(file => ({
                 originalName: file.originalname,
@@ -98,7 +82,6 @@ app.post('/api/upload', upload.array('files', 10), (req, res) => {
 
         fileDatabase.set(downloadCode, fileInfo);
 
-        // 返回下载信息
         res.json({
             success: true,
             downloadCode: downloadCode,
@@ -124,9 +107,7 @@ app.get('/api/file/:code', (req, res) => {
             return res.status(404).json({ error: '文件不存在或已过期' });
         }
 
-        // 检查是否过期
         if (fileInfo.expiryDate && new Date() > fileInfo.expiryDate) {
-            // 删除过期文件
             fileInfo.files.forEach(file => {
                 try {
                     fs.unlinkSync(file.path);
@@ -138,11 +119,10 @@ app.get('/api/file/:code', (req, res) => {
             return res.status(404).json({ error: '文件已过期' });
         }
 
-        // 返回文件信息（不包含敏感信息）
         res.json({
             success: true,
             files: fileInfo.files.map(file => ({
-                originalName: file.originalname,
+                originalName: file.originalName,
                 size: file.size,
                 mimetype: file.mimetype
             })),
@@ -190,9 +170,7 @@ app.get('/download/:code', (req, res) => {
             return res.status(404).send('文件不存在或已过期');
         }
 
-        // 检查是否过期
         if (fileInfo.expiryDate && new Date() > fileInfo.expiryDate) {
-            // 删除过期文件
             fileInfo.files.forEach(file => {
                 try {
                     fs.unlinkSync(file.path);
@@ -204,7 +182,6 @@ app.get('/download/:code', (req, res) => {
             return res.status(404).send('文件已过期');
         }
 
-        // 如果有密码，需要验证
         if (fileInfo.password) {
             const password = req.query.password;
             if (!password || password !== fileInfo.password) {
@@ -212,29 +189,13 @@ app.get('/download/:code', (req, res) => {
             }
         }
 
-        // 更新下载次数
         fileInfo.downloadCount++;
 
-        // 如果只有一个文件，直接下载
         if (fileInfo.files.length === 1) {
             const file = fileInfo.files[0];
             res.download(file.path, file.originalName);
         } else {
-            // 多个文件，创建ZIP包
-            const zip = archiver('zip', {
-                zlib: { level: 9 } // 设置压缩级别
-            });
-
-            res.attachment('files.zip');
-            zip.pipe(res);
-
-            // 添加文件到ZIP
-            fileInfo.files.forEach(file => {
-                zip.file(file.path, { name: file.originalName });
-            });
-
-            // 完成ZIP创建
-            zip.finalize();
+            res.status(501).send('多文件下载功能需要安装archiver包');
         }
 
     } catch (error) {
@@ -243,127 +204,20 @@ app.get('/download/:code', (req, res) => {
     }
 });
 
-// 删除文件API
-app.delete('/api/file/:code', (req, res) => {
-    try {
-        const { code } = req.params;
-        const fileInfo = fileDatabase.get(code);
-
-        if (!fileInfo) {
-            return res.status(404).json({ error: '文件不存在' });
-        }
-
-        // 删除物理文件
-        fileInfo.files.forEach(file => {
-            try {
-                fs.unlinkSync(file.path);
-            } catch (err) {
-                console.error('删除文件失败:', err);
-            }
-        });
-
-        // 从数据库中删除
-        fileDatabase.delete(code);
-
-        res.json({ success: true, message: '文件已删除' });
-
-    } catch (error) {
-        console.error('删除文件错误:', error);
-        res.status(500).json({ error: '删除文件失败' });
-    }
-});
-
-// 获取统计信息API
-app.get('/api/stats', (req, res) => {
-    try {
-        const stats = {
-            totalFiles: fileDatabase.size,
-            totalSize: 0,
-            activeFiles: 0
-        };
-
-        fileDatabase.forEach(fileInfo => {
-            stats.totalSize += fileInfo.files.reduce((sum, file) => sum + file.size, 0);
-            if (!fileInfo.expiryDate || new Date() <= fileInfo.expiryDate) {
-                stats.activeFiles++;
-            }
-        });
-
-        res.json(stats);
-
-    } catch (error) {
-        console.error('获取统计信息错误:', error);
-        res.status(500).json({ error: '获取统计信息失败' });
-    }
-});
-
-// 清理过期文件
-function cleanupExpiredFiles() {
-    const now = new Date();
-    const expiredCodes = [];
-
-    fileDatabase.forEach((fileInfo, code) => {
-        if (fileInfo.expiryDate && now > fileInfo.expiryDate) {
-            expiredCodes.push(code);
-        }
+// 测试API
+app.get('/api/test', (req, res) => {
+    res.json({ 
+        message: 'Hello from local server!',
+        timestamp: new Date().toISOString(),
+        success: true
     });
-
-    expiredCodes.forEach(code => {
-        const fileInfo = fileDatabase.get(code);
-        fileInfo.files.forEach(file => {
-            try {
-                fs.unlinkSync(file.path);
-            } catch (err) {
-                console.error('删除过期文件失败:', err);
-            }
-        });
-        fileDatabase.delete(code);
-    });
-
-    if (expiredCodes.length > 0) {
-        console.log(`清理了 ${expiredCodes.length} 个过期文件`);
-    }
-}
-
-// 定期清理过期文件（每小时执行一次）
-setInterval(cleanupExpiredFiles, 60 * 60 * 1000);
-
-// 错误处理中间件
-app.use((error, req, res, next) => {
-    if (error instanceof multer.MulterError) {
-        if (error.code === 'LIMIT_FILE_SIZE') {
-            return res.status(400).json({ error: '文件大小超过限制' });
-        }
-        if (error.code === 'LIMIT_FILE_COUNT') {
-            return res.status(400).json({ error: '文件数量超过限制' });
-        }
-    }
-    
-    console.error('服务器错误:', error);
-    res.status(500).json({ error: '服务器内部错误' });
-});
-
-// 404处理
-app.use((req, res) => {
-    res.status(404).json({ error: '接口不存在' });
 });
 
 // 启动服务器
 app.listen(PORT, () => {
-    console.log(`文件传输服务器运行在端口 ${PORT}`);
+    console.log(`本地测试服务器运行在端口 ${PORT}`);
     console.log(`访问地址: http://localhost:${PORT}`);
     console.log(`上传目录: ${uploadDir}`);
-});
-
-// 优雅关闭
-process.on('SIGTERM', () => {
-    console.log('收到SIGTERM信号，正在关闭服务器...');
-    process.exit(0);
-});
-
-process.on('SIGINT', () => {
-    console.log('收到SIGINT信号，正在关闭服务器...');
-    process.exit(0);
 });
 
 export default app;

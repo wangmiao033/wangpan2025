@@ -1,5 +1,5 @@
-// Vercel Serverless Function - 获取文件信息 API
-export default async function handler(req, res) {
+// 获取文件信息API
+export default function handler(req, res) {
   // 设置 CORS 头
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -10,24 +10,41 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { code } = req.query;
-  
-  if (!code) {
-    return res.status(400).json({ error: '缺少文件码' });
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: '只支持 GET 请求' });
   }
 
   try {
-    // 模拟文件信息
-    res.json({
+    const { code } = req.query;
+    
+    if (!code) {
+      return res.status(400).json({ error: '缺少下载码参数' });
+    }
+
+    // 从全局文件数据库获取文件信息
+    const fileInfo = global.fileDatabase?.get(code);
+
+    if (!fileInfo) {
+      return res.status(404).json({ error: '文件不存在或已过期' });
+    }
+
+    // 检查是否过期
+    if (fileInfo.expiryDate && new Date() > fileInfo.expiryDate) {
+      global.fileDatabase?.delete(code);
+      return res.status(404).json({ error: '文件已过期' });
+    }
+
+    // 返回文件信息（不包含敏感信息）
+    res.status(200).json({
       success: true,
-      files: [{
-        originalName: 'demo-file.txt',
-        size: 1024,
-        mimetype: 'text/plain'
-      }],
-      hasPassword: false,
-      uploadDate: new Date(),
-      message: '演示模式 - 文件信息获取成功'
+      files: fileInfo.files.map(file => ({
+        originalName: file.originalName,
+        size: file.size,
+        mimetype: file.mimetype
+      })),
+      hasPassword: !!fileInfo.password,
+      uploadDate: fileInfo.uploadDate,
+      expiryDate: fileInfo.expiryDate
     });
 
   } catch (error) {

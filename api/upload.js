@@ -14,19 +14,27 @@ export default function handler(req, res) {
   }
 
   try {
-    // 模拟文件上传成功
+    // 模拟文件上传成功（演示模式）
+    const password = req.body.password || null;
+    const expiry = parseInt(req.body.expiry) || 7;
     const downloadCode = Math.random().toString(36).substring(2, 15);
     
+    // 计算过期时间
+    const expiryDate = expiry === 0 ? null : new Date(Date.now() + expiry * 24 * 60 * 60 * 1000);
+    
+    // 返回下载信息
     res.status(200).json({
       success: true,
-      message: '文件上传成功（演示模式）',
       downloadCode: downloadCode,
-      downloadUrl: `${req.headers.origin || 'https://wangpan2025.vercel.app'}/api/download/${downloadCode}`,
-      timestamp: new Date().toISOString()
+      downloadUrl: `${req.headers.origin || 'https://wangpan2025.vercel.app'}/download/${downloadCode}`,
+      expiryDate: expiryDate,
+      fileCount: 1,
+      totalSize: 1024,
+      message: '文件上传成功（演示模式）'
     });
 
   } catch (error) {
-    console.error('上传错误:', error);
+    console.error('处理上传错误:', error);
     res.status(500).json({ error: '上传失败: ' + error.message });
   }
 }
