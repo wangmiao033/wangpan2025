@@ -172,35 +172,27 @@ class FileTransferApp {
         uploadBtn.disabled = true;
 
         try {
-            const formData = new FormData();
-            
-            // 添加文件
-            this.selectedFiles.forEach(file => {
-                formData.append('files', file);
-            });
+            // 模拟上传过程（演示模式）
+            await new Promise(resolve => setTimeout(resolve, 2000)); // 模拟2秒上传时间
 
-            // 添加选项
+            // 生成模拟结果
             const password = document.getElementById('password').value;
-            const expiry = document.getElementById('expiry').value;
+            const expiry = parseInt(document.getElementById('expiry').value) || 7;
+            const downloadCode = Math.random().toString(36).substring(2, 15);
+            
+            const expiryDate = expiry === 0 ? null : new Date(Date.now() + expiry * 24 * 60 * 60 * 1000);
+            
+            const result = {
+                success: true,
+                downloadCode: downloadCode,
+                downloadUrl: `${window.location.origin}/download/${downloadCode}`,
+                expiryDate: expiryDate,
+                fileCount: this.selectedFiles.length,
+                totalSize: this.selectedFiles.reduce((sum, file) => sum + file.size, 0),
+                message: '文件上传成功（演示模式）'
+            };
 
-            if (password) {
-                formData.append('password', password);
-            }
-            formData.append('expiry', expiry);
-
-            // 发送上传请求
-            const response = await fetch('/api/upload', {
-                method: 'POST',
-                body: formData
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                this.showUploadResult(result);
-            } else {
-                throw new Error(result.error || '上传失败');
-            }
+            this.showUploadResult(result);
 
         } catch (error) {
             console.error('上传错误:', error);
@@ -251,42 +243,41 @@ class FileTransferApp {
                 code = downloadCode.split('/download/')[1];
             }
 
-            // 获取文件信息
-            const response = await fetch(`/api/file/${code}`);
-            const fileInfo = await response.json();
+            // 模拟文件下载（演示模式）
+            const fileContent = `这是一个演示文件。
 
-            if (!fileInfo.success) {
-                throw new Error(fileInfo.error || '文件不存在');
-            }
+文件信息：
+- 下载码：${code}
+- 文件名：demo-file.txt
+- 大小：1024 字节
+- 类型：text/plain
+- 下载时间：${new Date().toLocaleString('zh-CN')}
 
-            // 检查是否需要密码
-            if (fileInfo.hasPassword) {
-                const password = prompt('请输入文件密码:');
-                if (!password) {
-                    return;
-                }
+注意：这是演示模式，实际应用中会返回真实的文件内容。
 
-                // 验证密码
-                const verifyResponse = await fetch(`/api/verify-password/${code}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ password })
-                });
+在Vercel的无服务器环境中，真实的文件传输需要：
+1. 使用云存储服务（如AWS S3、Google Cloud Storage）
+2. 或者使用专门的文件传输服务
+3. 或者部署到支持文件存储的服务器
 
-                const verifyResult = await verifyResponse.json();
-                if (!verifyResult.success) {
-                    this.showError('密码错误');
-                    return;
-                }
+当前版本用于演示界面和功能流程。`;
 
-                // 使用密码下载
-                window.open(`/download/${code}?password=${encodeURIComponent(password)}`, '_blank');
-            } else {
-                // 直接下载
-                window.open(`/download/${code}`, '_blank');
-            }
+            // 创建下载链接
+            const blob = new Blob([fileContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            
+            // 创建下载链接并触发下载
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'demo-file.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            // 清理URL对象
+            URL.revokeObjectURL(url);
+
+            this.showError('演示文件已下载！这是演示模式，实际应用中会下载真实文件。');
 
         } catch (error) {
             console.error('下载错误:', error);
